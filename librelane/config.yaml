@@ -85,8 +85,8 @@ PAD_NORTH: [
     "edge_info\\[2\\].edge_info_pad",
     "edge_info\\[3\\].edge_info_pad",
 
-    "iovddd_pad",
-    "iovssa_pad",
+    iovddd_pad,
+    iovssd_pad,
 
     "edge_info\\[4\\].edge_info_pad",
     "edge_info\\[5\\].edge_info_pad",
@@ -100,10 +100,10 @@ PAD_WEST: [
     spi_si_pad,
     spi_so_pad,
 
-    "vdda\\[1\\].vdda_pad",
-    "vssa\\[4\\].vssa_pad",
-    rst_n_pad,
-    
+    vddd_pad,
+    vssd_pad,
+
+    rst_n_pad,    
     test_mode_pad, 
     clk_mon_pad, 
     unused_pad 

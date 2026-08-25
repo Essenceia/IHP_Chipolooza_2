@@ -5,9 +5,9 @@
 
 // TODO: seperate out digital power again once we have the splitter cells
 module chip_top #(
-	parameter NUM_VSSA   = 5,
-	parameter NUM_VDDA   = 2,
-	parameter NUM_IOVSSA = 2,
+	parameter NUM_VSSA   = 4,
+	parameter NUM_VDDA   = 1,
+	parameter NUM_IOVSSA = 1,
 	parameter NUM_IOVDDA = 1,
 	// Signal pads
 	parameter EDGE_INFO_W = 8,
@@ -108,35 +108,38 @@ module chip_top #(
 	endgenerate // power
 	
 	// Digital power domain
-	(* keep *)
-   	sg13cmos5l_IOPadIOVdd iovddd_pad(
+	(* keep *) sg13cmos5l_IOPadIOVdd iovddd_pad(
 	`ifdef USE_POWER_PINS
 	.iovdd  (IOVDDD),
-	.iovss  (IOVSSD)
-	.vdd    (VDDD),
-	.vss    (VSSD)
-	`endif
-	);
-	(* keep *)
-	sg13cmos5l_IOPadIOVss iovssa_pad(
-	`ifdef USE_POWER_PINS
-	.iovdd  (IOVDDA),
 	.iovss  (IOVSSD),
 	.vdd    (VDDD),
 	.vss    (VSSD)
 	`endif
 	);
-
-/*
-	(* keep *)
-	sg13cmos5l_IOPadVss dvss_pad(
+	(* keep *) sg13cmos5l_IOPadIOVss iovssd_pad(
 	`ifdef USE_POWER_PINS
-	.iovdd  (IODVDD),
-	.iovss  (IODVSS),
-	.vdd    (DVDD),
-	.vss    (DVSS)
+	.iovdd  (IOVDDD),
+	.iovss  (IOVSSD),
+	.vdd    (VDDD),
+	.vss    (VSSD)
 	`endif
-	);*/
+	);
+	(* keep *) sg13cmos5l_IOPadVdd vddd_pad(
+	`ifdef USE_POWER_PINS
+	.iovdd  (IOVDDD),
+	.iovss  (IOVSSD),
+	.vdd    (VDDD),
+	.vss    (VSSD)
+	`endif
+	);
+	(* keep *) sg13cmos5l_IOPadVss vssd_pad(
+	`ifdef USE_POWER_PINS
+	.iovdd  (IOVDDD),
+	.iovss  (IOVSSD),
+	.vdd    (VDDD),
+	.vss    (VSSD)
+	`endif
+	);
 
 
 	// Signal IO pad instances
