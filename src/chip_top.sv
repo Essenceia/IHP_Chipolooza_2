@@ -146,10 +146,10 @@ module chip_top #(
 	(* keep *)
 	sg13cmos5l_IOPadIn rst_n_pad(
 	`ifdef USE_POWER_PINS
-	.iovdd  (IOVDDA),
-	.iovss  (IOVSSA),
-	.vdd    (VDDA),
-	.vss    (VSSA),
+	.iovdd  (IOVDDD),
+	.iovss  (IOVSSD),
+	.vdd    (VDDD),
+	.vss    (VSSD),
 	`endif
 	.p2c    (rst_n_PAD2CORE),
 	.pad    (rst_n_PAD)
@@ -225,28 +225,28 @@ module chip_top #(
 	wire spi_sclk, spi_ncs, spi_si, spi_so_en, spi_so;
 	(* keep *) sg13cmos5l_IOPadIn spi_sclk_pad (
 		`ifdef USE_POWER_PINS
-		.iovdd(IOVDDA), .iovss(IOVSSA),	.vdd(VDDA),	.vss(VSSA),
+		.iovdd(IOVDDD), .iovss(IOVSSD),	.vdd(VDDD),	.vss(VSSD),
 		`endif
 		.p2c(spi_sclk),	
 		.pad(spi_sclk_PAD)
 	 ); 
 	(* keep *) sg13cmos5l_IOPadIn spi_ncs_pad (
 		`ifdef USE_POWER_PINS
-		.iovdd(IOVDDA), .iovss(IOVSSA),	.vdd(VDDA),	.vss(VSSA),
+		.iovdd(IOVDDD), .iovss(IOVSSD),	.vdd(VDDD),	.vss(VSSD),
 		`endif
 		.p2c(spi_ncs), 
 		.pad(spi_ncs_PAD)
 	 ); 
 	(* keep *) sg13cmos5l_IOPadIn spi_si_pad (
 		`ifdef USE_POWER_PINS
-		.iovdd(IOVDDA), .iovss(IOVSSA),	.vdd(VDDA),	.vss(VSSA),
+		.iovdd(IOVDDD), .iovss(IOVSSD),	.vdd(VDDD),	.vss(VSSD),
 		`endif
 		.p2c(spi_si), 
 		.pad(spi_si_PAD)
 	 ); 
 	(* keep *) sg13cmos5l_IOPadTriOut30mA spi_so_pad (
 		`ifdef USE_POWER_PINS
-		.iovdd(IOVDDA), .iovss(IOVSSA),	.vdd(VDDA),	.vss(VSSA),
+		.iovdd(IOVDDD), .iovss(IOVSSD),	.vdd(VDDD),	.vss(VSSD),
 		`endif
 		.pad(spi_so_PAD), 
 		.c2p(spi_so), 
@@ -259,7 +259,7 @@ module chip_top #(
 	(* keep *)
 	sg13cmos5l_IOPadOut30mA edge_info_pad (
 	    `ifdef USE_POWER_PINS
-		.iovdd(IOVDDA), .iovss(IOVSSA),	.vdd(VDDA),	.vss(VSSA),
+		.iovdd(IOVDDD), .iovss(IOVSSD),	.vdd(VDDD),	.vss(VSSD),
 	    `endif
 	    .c2p(edge_info_pad2core[i]),
 	    .pad(edge_info_PAD[i])
@@ -270,21 +270,21 @@ module chip_top #(
 	wire test_mode, clk_mon, unused_pad2core; 
 	(* keep *) sg13cmos5l_IOPadIn test_mode_pad (
 		`ifdef USE_POWER_PINS
-		.iovdd(IOVDDA), .iovss(IOVSSA),	.vdd(VDDA),	.vss(VSSA),
+		.iovdd(IOVDDD), .iovss(IOVSSD),	.vdd(VDDD),	.vss(VSSD),
 		`endif
 		.p2c(test_mode), 
 		.pad(test_mode_PAD)
 	 ); 
 	(* keep *) sg13cmos5l_IOPadIn unused_pad (
 		`ifdef USE_POWER_PINS
-		.iovdd(IOVDDA), .iovss(IOVSSA),	.vdd(VDDA),	.vss(VSSA),
+		.iovdd(IOVDDD), .iovss(IOVSSD),	.vdd(VDDD),	.vss(VSSD),
 		`endif
 		.p2c(unused_pad2core), 
 		.pad(unused_PAD)
 	 ); 	
 	(* keep *) sg13cmos5l_IOPadOut30mA clk_mon_pad (
 		`ifdef USE_POWER_PINS
-		.iovdd(IOVDDA), .iovss(IOVSSA),	.vdd(VDDA),	.vss(VSSA),
+		.iovdd(IOVDDD), .iovss(IOVSSD),	.vdd(VDDD),	.vss(VSSD),
 		`endif
 		.c2p(clk_mon), 
 		.pad(clk_mon_PAD)
@@ -294,8 +294,8 @@ module chip_top #(
 	// Digital core design
 	(* keep *) chip_core i_chip_core (
 	`ifdef USE_POWER_PINS
-		.VDD(VDDA),
-		.VSS(VSSA),
+		.VDD(VDDD),
+		.VSS(VSSD),
 	`endif
 		.clk        (digital_clk),
 		.rst_n      (rst_n_PAD2CORE),
