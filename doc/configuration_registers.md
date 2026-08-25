@@ -4,7 +4,7 @@ Bellow is an exhaustive list of all configuration registers accessible over the
 digital interface used to drive the behavior of the SerDes ASIC. 
 
 All configuration registers are expected to be outlined in this document once in the 
-[register list table]() and with there mapping detailed and usage outlined 
+[register list table](#register-list) and with there mapping detailed and usage outlined 
 in the section afterwards. 
 
 The template for the mapping details is as follows : 
@@ -18,7 +18,7 @@ Encoding :
 | Bits slice index | Description                                                                                | Type                     | Reset |
 | ---------------- | ------------------------------------------------------------------------------------------ | ------------------------ | ----- |
 | MSB:8            | Reserved (aka unused)                                                                      | -                        | 'X    |
-| 7:4              | **ctrl_bit2_name**: Description of what this control bit is is use, who uses it and it works. Include encoding if relevant, eg: `4'd0` disable, `4'dF` enable, default: underfined behavior. | RW | 4'd0  |
+| 7:4              | **ctrl_bit2_name**: Description of what this control bit is is use, who uses it and it works. Include encoding if relevant, eg: `4'd0` disable, `4'dF` enable, default: undefined behavior. | RW | 4'd0  |
 | 3:2              | **ctrl_bit1_name**: Description of what this control bit is is use, who uses it and it works.  | RO            | 2'dX  |
 | 1:0              | **ctrl_bit0_name**: Description of what this control bit is is use, who uses it and it works.  | WO           | 2'd0  |
 
@@ -31,6 +31,7 @@ Encoding :
 - NR = Non Roll-over
 
 `SC`: When written it is automatically cleared to the reset value in the next cycle, use to sent pulses.
+
 `NR`: In the absence of a non roll-over the counter will overflow. 
 
 ## Register list 
@@ -54,7 +55,7 @@ Encoding :
 | RX valid blocks seen count     | 32           | Digital                   | 14       |
 | RX invalid blocks seen count   | 32           | Digital                   | 15       |
 
-## Register decription
+## Register description
 
 ### PCS control
 
@@ -75,7 +76,7 @@ path.
 | ---------------- | ------------------------------------------------------------------------------------------ | ------------------------ | ----- |
 | MSB:2            | Reserved (aka unused)                                                                      | -                        | 'X    |
 |   1              | **tx_test_pattern_pbrs7**: Select the PBRS7 test pattern. `1'b0` - PBRS31, `1'b1` - PBRS7  | RW                       | 1'b0  |
-|   0              | **tx_test_mode**: Enable TX test pattern overwritting tx output data. `1'b0` - dissable, `1'b1` - enable. | RW           | 1'b0  |
+|   0              | **tx_test_mode**: Enable TX test pattern overwriting tx output data. `1'b0` - disable, `1'b1` - enable. | RW           | 1'b0  |
 
  
 ### RX test mode
@@ -106,7 +107,7 @@ Note: Uses the same encoding and definitions as MDIO 3.33.
 
 ### RX PCS status
 
-These counters can be cleared by writting `pcs_reset`.
+These counters can be cleared by writing `pcs_reset`.
 
 | Bits slice index | Description                                                                                | Type                     | Reset |
 | ---------------- | ------------------------------------------------------------------------------------------ | ------------------------ | ----- |
@@ -119,7 +120,7 @@ Note: Uses the same encoding and definitions as MDIO 3.33.
  
 ### RX split counter
 
-These counters can be cleared by writting `pcs_reset`.
+These counters can be cleared by writing `pcs_reset`.
 
 | Bits slice index | Description                                                                                | Type                     | Reset |
 | ---------------- | ------------------------------------------------------------------------------------------ | ------------------------ | ----- |
@@ -136,7 +137,7 @@ These counters can be cleared by writting `pcs_reset`.
 
 ### RX invalid block seen counter
 
-These counters can be cleared by writting `pcs_reset`.
+These counters can be cleared by writing `pcs_reset`.
 
 | Bits slice index | Description                                                                                | Type                     | Reset |
 | ---------------- | ------------------------------------------------------------------------------------------ | ------------------------ | ----- |
