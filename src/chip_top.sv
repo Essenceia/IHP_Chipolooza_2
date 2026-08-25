@@ -297,19 +297,19 @@ module chip_top #(
 		.VDD(VDDA),
 		.VSS(VSSA),
 	`endif
-	.clk        (digital_clk),
-	.rst_n      (rst_n_PAD2CORE),
+		.clk        (digital_clk),
+		.rst_n      (rst_n_PAD2CORE),
 
-		.spi_sclk(spi_sclk), 
+		.spi_sclk    (spi_sclk), 
 		.spi_ncs_i   (spi_ncs), 
-		.spi_si_i(scp_si),
+		.spi_si_i    (scp_si),
 		.spi_so_en_o (spi_so_en),
-		.spi_so_o(spi_so),
+		.spi_so_o    (spi_so),
 
-.edge_info_i(edge_info), 
-.test_mon_i(test_mode), 
-.clk_mon_o(clk_mon),
-.unused_pad_i(unused_pad2core)
+		.edge_info_i (edge_info), 
+		.test_mon_i  (test_mode), 
+		.clk_mon_o   (clk_mon),
+		.unused_pad_i(unused_pad2core)
 	);
 
 	// Dummy analog design
