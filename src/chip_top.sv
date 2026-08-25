@@ -10,10 +10,8 @@ module chip_top #(
 	parameter NUM_IOVSSA = 2,
 	parameter NUM_IOVDDA = NUM_IOVSSA,
 	// Signal pads
-	parameter NUM_INPUT_PADS  = 2,
-	parameter NUM_OUTPUT_PADS = 1,
-	parameter NUM_BIDIR_PADS  = 8,
-	parameter NUM_ANALOG_PADS = 6
+	parameter EDGE_INFO_W = 8,
+	parameter NUM_ANALOG_PADS = 8
 	)(
 	`ifdef USE_POWER_PINS
 	//inout wire IOAVDD, IODVDD,
@@ -32,25 +30,26 @@ module chip_top #(
 	inout  wire tx_n_PAD,
 	inout  wire rx_p_PAD,
 	inout  wire rx_n_PAD,
+	
+	inout  wire [NUM_ANALOG_PADS-1:0] analog_PAD
 
 	inout  wire spi_sclk_PAD,
 	inout  wire spi_ncs_PAD,
 	inout  wire spi_si_PAD,
 	inout  wire spi_so_PAD,
 
-	inout  wire [NUM_INPUT_PADS-1 :0] input_PAD,
-	inout  wire [NUM_OUTPUT_PADS-1:0] output_PAD,
-	inout  wire [NUM_BIDIR_PADS-1 :0] bidir_PAD,
-	inout  wire [NUM_ANALOG_PADS-1:0] analog_PAD
+	inout  wire test_mode_PAD, 
+	inout  wire clk_mon_PAD, 
+	inout  wire unused_PAD, 
+
+	inout  wire [EDGE_INFO_W-1:0] edge_info_PAD
 );
+	wire VDDD, VSSD; 
+	assign VDDD = VDDA; // TODO remove once we have splitter cells
+	assign VSSD = VSSA; 
 
 	(* keep *) wire digital_clk;
-	wire rst_n_PAD2CORE;
-	wire [NUM_INPUT_PADS-1 :0] input_PAD2CORE;
-	wire [NUM_OUTPUT_PADS-1:0] output_CORE2PAD;
-	wire [NUM_BIDIR_PADS-1 :0] bidir_PAD2CORE;
-	wire [NUM_BIDIR_PADS-1 :0] bidir_CORE2PAD;
-	wire [NUM_BIDIR_PADS-1 :0] bidir_CORE2PAD_OE;
+	wire                       rst_n_PAD2CORE;
 	wire [NUM_ANALOG_PADS-1:0] analog_PADRES;
 
 	// Power/gnd
@@ -155,56 +154,6 @@ module chip_top #(
 	.p2c    (rst_n_PAD2CORE),
 	.pad    (rst_n_PAD)
 	);
-
-	generate
-	for (genvar i=0; i<NUM_INPUT_PADS; i++) begin : inputs
-		(* keep *)
-	sg13cmos5l_IOPadIn input_pad (
-	    `ifdef USE_POWER_PINS
-	    .iovdd  (IOVDDA),
-	    .iovss  (IOVSSA),
-	    .vdd    (VDDA),
-	    .vss    (VSSA),
-	    `endif
-	    .p2c    (input_PAD2CORE[i]),
-	    .pad    (input_PAD[i])
-	);
-	end
-	endgenerate
-
-	generate
-	for (genvar i=0; i<NUM_OUTPUT_PADS; i++) begin : outputs
-		(* keep *)
-	sg13cmos5l_IOPadOut30mA output_pad (
-	    `ifdef USE_POWER_PINS
-	    .iovdd  (IOVDDA),
-	    .iovss  (IOVSSA),
-	    .vdd    (VDDA),
-	    .vss    (VSSA),
-	    `endif
-	    .c2p    (output_CORE2PAD[i]),
-	    .pad    (output_PAD[i])
-	);
-	end
-	endgenerate
-
-	generate
-	for (genvar i=0; i<NUM_BIDIR_PADS; i++) begin : bidirs
-		(* keep *)
-	sg13cmos5l_IOPadInOut30mA bidir_pad (
-	    `ifdef USE_POWER_PINS
-	    .iovdd  (IOVDDA),
-	    .iovss  (IOVSSA),
-	    .vdd    (VDDA),
-	    .vss    (VSSA),
-	    `endif
-	    .c2p    (bidir_CORE2PAD[i]),
-	    .c2p_en (bidir_CORE2PAD_OE[i]),
-	    .p2c    (bidir_PAD2CORE[i]),
-	    .pad    (bidir_PAD[i])
-	);
-	end
-	endgenerate
 	
 	generate
 	for (genvar i=0; i<NUM_ANALOG_PADS; i++) begin : analogs
@@ -272,7 +221,7 @@ module chip_top #(
 	.pad    (clk_n_PAD)
 	);
 
-	// name digital signals
+	// SPI pads
 	wire spi_sclk, spi_ncs, spi_si, spi_so_en, spi_so;
 	(* keep *) sg13cmos5l_IOPadIn spi_sclk_pad (
 		`ifdef USE_POWER_PINS
@@ -303,13 +252,47 @@ module chip_top #(
 		.c2p(spi_so), 
 		.c2p_en(spi_so_en)
 	);
+	// edge info pads
+	wire [EDGE_INFO_W-1:0] edge_info;
+	generate
+	for (genvar i=0; i< EDGE_INFO_W; i++) begin : edge_info
+	(* keep *)
+	sg13cmos5l_IOPadOut30mA edge_info_pad (
+	    `ifdef USE_POWER_PINS
+		.iovdd(IOVDDA), .iovss(IOVSSA),	.vdd(VDDA),	.vss(VSSA),
+	    `endif
+	    .c2p(edge_info[i]),
+	    .pad(edge_info_PAD[i])
+	);
+	end
+	endgenerate
+	// misc digital pads
+	wire test_mode, clk_mon, unused_pad2core; 
+	(* keep *) sg13cmos5l_IOPadIn test_mode_pad (
+		`ifdef USE_POWER_PINS
+		.iovdd(IOVDDA), .iovss(IOVSSA),	.vdd(VDDA),	.vss(VSSA),
+		`endif
+		.p2c(test_mode), 
+		.pad(test_mode_PAD)
+	 ); 
+	(* keep *) sg13cmos5l_IOPadIn unused_pad (
+		`ifdef USE_POWER_PINS
+		.iovdd(IOVDDA), .iovss(IOVSSA),	.vdd(VDDA),	.vss(VSSA),
+		`endif
+		.p2c(unused_pad2core), 
+		.pad(unused_PAD)
+	 ); 	
+	(* keep *) sg13cmos5l_IOPadOut30mA clk_mon_pad (
+		`ifdef USE_POWER_PINS
+		.iovdd(IOVDDA), .iovss(IOVSSA),	.vdd(VDDA),	.vss(VSSA),
+		`endif
+		.c2p(clk_mon), 
+		.pad(clk_mon_PAD)
+	 ); 
+	
 
 	// Digital core design
-	(* keep *) chip_core #(
-	.NUM_INPUT_PADS  (NUM_INPUT_PADS),
-	.NUM_OUTPUT_PADS (NUM_OUTPUT_PADS),
-	.NUM_BIDIR_PADS  (NUM_BIDIR_PADS)
-	) i_chip_core (
+	(* keep *) chip_core i_chip_core (
 	`ifdef USE_POWER_PINS
 		.VDD(VDDA),
 		.VSS(VSSA),
@@ -323,11 +306,10 @@ module chip_top #(
 		.spi_so_en_o (spi_so_en),
 		.spi_so_o(spi_so),
 
-	.input_in   (input_PAD2CORE),
-	.output_out (output_CORE2PAD),
-	.bidir_in   (bidir_PAD2CORE),
-	.bidir_out  (bidir_CORE2PAD),
-	:bidir_oe   (bidir_CORE2PAD_OE)
+.edge_info_i(edge_info), 
+.test_mon_i(test_mode), 
+.clk_mon_o(clk_mon),
+.unused_pad_i(unused_pad2core)
 	);
 
 	// Dummy analog design
