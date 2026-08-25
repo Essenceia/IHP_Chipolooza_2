@@ -86,7 +86,7 @@ PAD_NORTH: [
     "edge_info\\[3\\].edge_info_pad",
 
     "iovddd_pad",
-    "iovssa\\[1\\].iovssa_pad",
+    "iovssa_pad",
 
     "edge_info\\[4\\].edge_info_pad",
     "edge_info\\[5\\].edge_info_pad",

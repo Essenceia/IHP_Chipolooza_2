@@ -195,7 +195,6 @@ place_io_fill -row IO_EAST {*}$::env(PAD_FILLERS)
 puts "\[INFO\] Connecting ring signals…"
 
 # Connect the ring signals
-puts "\[WARNING\] Not connecting ring signals! TODO look into this more we want partial ring islands"
 connect_by_abutment
 
 puts "\[INFO\] Connecting by abutment finished…"

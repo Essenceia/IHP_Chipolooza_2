@@ -83,16 +83,6 @@ module chip_top #(
 	`endif
 	);
 	end
-	/*
-	(* keep *)
-	sg13cmos5l_IOPadIOVss iodvss_pad(
-	`ifdef USE_POWER_PINS
-	.iovdd  (IODVDD),
-	.iovss  (IODVSS),
-	.vdd    (DVDD),
-	.vss    (DVSS)
-	`endif
-	); */
 	for (genvar i = 0; i  < NUM_VDDA; i = i+1) begin: vdda 
 	(* keep *)
 	sg13cmos5l_IOPadVdd vdda_pad(
@@ -122,12 +112,22 @@ module chip_top #(
    	sg13cmos5l_IOPadIOVdd iovddd_pad(
 	`ifdef USE_POWER_PINS
 	.iovdd  (IOVDDD),
+	.iovss  (IOVSSD)
+	.vdd    (VDDD),
+	.vss    (VSSD)
+	`endif
+	);
+	(* keep *)
+	sg13cmos5l_IOPadIOVss iovssa_pad(
+	`ifdef USE_POWER_PINS
+	.iovdd  (IOVDDA),
 	.iovss  (IOVSSD),
 	.vdd    (VDDD),
 	.vss    (VSSD)
 	`endif
 	);
-	/*
+
+/*
 	(* keep *)
 	sg13cmos5l_IOPadVss dvss_pad(
 	`ifdef USE_POWER_PINS
