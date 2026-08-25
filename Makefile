@@ -12,6 +12,8 @@ LIBRELANE_CONFIGS = librelane/config.yaml
 
 .DEFAULT_GOAL := help
 
+SRC_DIR := src
+
 $(PDK_ROOT)/$(PDK):
 	ciel enable $(PDK_COMMIT) --pdk-root $(PDK_ROOT) --pdk-family $(PDK)
 
@@ -64,3 +66,13 @@ copy-final: ## Copy final output files from the last run
 	rm -rf final/
 	cp -r librelane/runs/${RUN_TAG}/final/ final/
 .PHONY: copy-final
+
+TOP_NAME := chip_core
+entry_deps := $(wildcard ${SRC_DIR}/*.v) ${SRC_DIR}/${TOP_NAME}.sv
+CONF := conf
+WAIVER_FILE := waiver.vlt
+LINT_FLAGS := -Wall -Wpedantic 
+
+lint: $(entry_deps) ## Run lint on pure rtl blocks
+	verilator $(CONF)/$(WAIVER_FILE) -y $(SRC_DIR) -DVERILATOR_LINT=1 --lint-only $(LINT_FLAGS) --no-timing $^ --top $(TOP_NAME)
+.PHONY: lint

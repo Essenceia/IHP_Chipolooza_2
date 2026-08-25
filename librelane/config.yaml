@@ -36,6 +36,7 @@ VERILOG_FILES:
 - dir::../src/chip_top.sv
 - dir::../src/analog_dummy.v
 - dir::../src/chip_core.sv
+- dir::../src/spi.v
 
 VERILOG_DEFINES: [FUNCTIONAL]
 
@@ -50,6 +51,8 @@ PRIMARY_GDSII_STREAMOUT_TOOL: klayout
 # Signal, AVDD, txp, txn, VSS, clkp, clkn, vss
 PAD_SOUTH: [
     "analogs\\[0\\].analog_pad",
+    "analogs\\[1\\].analog_pad",
+    "analogs\\[3\\].analog_pad",
 
     "vdda\\[0\\].vdda_pad",
     "tx_p_pad",   
@@ -58,11 +61,15 @@ PAD_SOUTH: [
     clk_p_pad,
     clk_n_pad,
     "vssa\\[1\\].vssa_pad"
+
 ]
 
 PAD_EAST: [
-    "analogs\\[1\\].analog_pad",
-    "analogs\\[2\\].analog_pad",
+    "analogs\\[4\\].analog_pad",
+    "analogs\\[5\\].analog_pad",
+    "analogs\\[6\\].analog_pad",
+    "analogs\\[7\\].analog_pad",
+
     "iovdda\\[0\\].iovdda_pad",
     "iovssa\\[0\\].iovssa_pad",
 
@@ -73,29 +80,33 @@ PAD_EAST: [
 ]
 # TODO: replace IO analog power pads with IO digital power
 PAD_NORTH: [
-    "bidirs\\[6\\].bidir_pad", 
-    "bidirs\\[7\\].bidir_pad", 
-    rst_n_pad,
+    "edge_info\\[0\\].edge_info_pad",
+    "edge_info\\[1\\].edge_info_pad",
+    "edge_info\\[2\\].edge_info_pad",
+    "edge_info\\[3\\].edge_info_pad",
 
-    "iovdda\\[1\\].iovdda_pad",
-    "iovssa\\[1\\].iovssa_pad",
+    iovddd_pad,
+    iovssd_pad,
 
-    "bidirs\\[0\\].bidir_pad", 
-    "bidirs\\[1\\].bidir_pad", 
-    "bidirs\\[2\\].bidir_pad"
+    "edge_info\\[4\\].edge_info_pad",
+    "edge_info\\[5\\].edge_info_pad",
+    "edge_info\\[6\\].edge_info_pad",
+    "edge_info\\[7\\].edge_info_pad"
 ]
 # TODO: replace analog power pads with digital power
 PAD_WEST: [
-    "inputs\\[0\\].input_pad",
-    "inputs\\[1\\].input_pad",
-    "outputs\\[0\\].output_pad", 
+    unused_pad, 
+    test_mode_pad,
+    rst_n_pad,     
+    clk_mon_pad, 
 
-    "vdda\\[1\\].vdda_pad",
-    "vssa\\[4\\].vssa_pad",
+    vddd_pad,
+    vssd_pad,
     
-    "bidirs\\[3\\].bidir_pad", 
-    "bidirs\\[4\\].bidir_pad", 
-    "bidirs\\[5\\].bidir_pad" 
+    spi_so_pad,
+    spi_si_pad,
+    spi_ncs_pad,
+    spi_sclk_pad,
 ]
 
 PAD_CFG: dir::pad_cfg.tcl

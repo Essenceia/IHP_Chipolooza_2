@@ -1,6 +1,7 @@
 # SerDes Chipolooza #2 challenge on IHP CMOS5L
 
-2.5 mm^2 mixed signal chip. 
+SerDes mixed signal test chip, part the the second Chipolooza chalenge, targetting the IHP cmos5l node. 
+This chip uses 2.5 mm^2 of die area. 
 
 ![chip](/doc/padframe.png) 
 
