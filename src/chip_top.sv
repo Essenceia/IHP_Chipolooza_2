@@ -17,7 +17,6 @@ module chip_top #(
 	//inout wire IOAVDD, IODVDD,
 	inout wire IOVDDA,
 	inout wire IOVSSA,
-	input wire IOVDDD, 
 	//inout wire VDDD, VSSD,
 	inout wire  VDDA,
 	inout wire  VSSA,
@@ -45,12 +44,13 @@ module chip_top #(
 
 	inout  wire [EDGE_INFO_W-1:0] edge_info_PAD
 );
-`ifdef USER_POWER_PINS
+`ifdef USE_POWER_PINS
+// TODO remove VDD shorts once we have splitter cells
 	wire IOVDDD, IOVSSD; 	
 	wire VDDD, VSSD; 
 	assign IOVDDD = IOVDDA; 
 	assign IOVSSD = IOVSSA; 
-	assign VDDD = VDDA; // TODO remove once we have splitter cells
+	assign VDDD = VDDA; 
 	assign VSSD = VSSA; 
 `endif
 
