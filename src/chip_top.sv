@@ -31,7 +31,7 @@ module chip_top #(
 	inout  wire rx_p_PAD,
 	inout  wire rx_n_PAD,
 	
-	inout  wire [NUM_ANALOG_PADS-1:0] analog_PAD
+	inout  wire [NUM_ANALOG_PADS-1:0] analog_PAD,
 
 	inout  wire spi_sclk_PAD,
 	inout  wire spi_ncs_PAD,
@@ -44,9 +44,11 @@ module chip_top #(
 
 	inout  wire [EDGE_INFO_W-1:0] edge_info_PAD
 );
+`ifdef USER_POWER_PINS
 	wire VDDD, VSSD; 
 	assign VDDD = VDDA; // TODO remove once we have splitter cells
 	assign VSSD = VSSA; 
+`endif
 
 	(* keep *) wire digital_clk;
 	wire                       rst_n_PAD2CORE;
@@ -253,7 +255,7 @@ module chip_top #(
 		.c2p_en(spi_so_en)
 	);
 	// edge info pads
-	wire [EDGE_INFO_W-1:0] edge_info;
+	wire [EDGE_INFO_W-1:0] edge_info_pad2core;
 	generate
 	for (genvar i=0; i< EDGE_INFO_W; i++) begin : edge_info
 	(* keep *)
@@ -261,7 +263,7 @@ module chip_top #(
 	    `ifdef USE_POWER_PINS
 		.iovdd(IOVDDA), .iovss(IOVSSA),	.vdd(VDDA),	.vss(VSSA),
 	    `endif
-	    .c2p(edge_info[i]),
+	    .c2p(edge_info_pad2core[i]),
 	    .pad(edge_info_PAD[i])
 	);
 	end
@@ -302,12 +304,12 @@ module chip_top #(
 
 		.spi_sclk    (spi_sclk), 
 		.spi_ncs_i   (spi_ncs), 
-		.spi_si_i    (scp_si),
+		.spi_si_i    (spi_si),
 		.spi_so_en_o (spi_so_en),
 		.spi_so_o    (spi_so),
 
-		.edge_info_i (edge_info), 
-		.test_mon_i  (test_mode), 
+		.edge_info_o (edge_info_pad2core), 
+		.test_mode_i (test_mode), 
 		.clk_mon_o   (clk_mon),
 		.unused_pad_i(unused_pad2core)
 	);

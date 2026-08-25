@@ -62,21 +62,25 @@ wire data_finished;
 
 
 always @(posedge sclk or negedge rst_n) begin
-	if (~rst_n | ncs_i) begin
+	if (~rst_n) begin
 		fsm_q <= OPCODE; 
 	end else begin
-		case(fsm_q) 
-			OPCODE:	begin 
-				fsm_q   <= op_finished ? (op_v ? ADDR: IDLE): OPCODE;  
-				op_rd_q <= op_rd_next; 
-			end
-			ADDR:	fsm_q <= addr_finished ? DATA: ADDR;  
-			DATA:	fsm_q <= data_finished ? IDLE: DATA;  
-			IDLE:   fsm_q <= IDLE; // loop in idle until cs is deasserted
-			default: fsm_q <= IDLE; 
-		endcase
+		if (ncs_i) begin
+			fsm_q <= OPCODE;
+		end else begin
+			case(fsm_q) 
+				OPCODE:	fsm_q <= op_finished ? (op_v ? ADDR: IDLE): OPCODE;  
+				ADDR:	fsm_q <= addr_finished ? DATA: ADDR;  
+				DATA:	fsm_q <= data_finished ? IDLE: DATA;  
+				IDLE:   fsm_q <= IDLE; // loop in idle until cs is deasserted
+				default: fsm_q <= IDLE; 
+			endcase
+		end
 	end
 end
+
+always @(posedge sclk) 
+	op_rd_q <= op_rd_next; 
 
 /* data is allways latched on rising edge */ 
 always @(posedge sclk) begin 
@@ -97,8 +101,11 @@ assign data_finished = (fsm_q == DATA) & cnt_q == DATA_CNT;
 assign cnt_rst = op_finished | addr_finished | data_finished; 
 
 always @(posedge sclk or negedge rst_n) begin
-	if (~rst_n | ncs_i | cnt_rst) cnt_q <= {CNT_W{1'b0}};
-	else cnt_q <= cnt_q + 1'b1; 
+	if (~rst_n) cnt_q <= {CNT_W{1'b0}};
+	else begin
+		if (ncs_i | cnt_rst) cnt_q <= {CNT_W{1'b0}};
+		else cnt_q <= cnt_q + 1'b1; 
+	end
 end
 
 /* opcode */ 

@@ -36,6 +36,7 @@ VERILOG_FILES:
 - dir::../src/chip_top.sv
 - dir::../src/analog_dummy.v
 - dir::../src/chip_core.sv
+- dir::../src/spi.v
 
 VERILOG_DEFINES: [FUNCTIONAL]
 
@@ -79,23 +80,23 @@ PAD_EAST: [
 ]
 # TODO: replace IO analog power pads with IO digital power
 PAD_NORTH: [
-	"edge_info\\[0\\].edge_info_pad",
-	"edge_info\\[1\\].edge_info_pad",
-	"edge_info\\[2\\].edge_info_pad",
-	"edge_info\\[3\\].edge_info_pad",
+    "edge_info\\[0\\].edge_info_pad",
+    "edge_info\\[1\\].edge_info_pad",
+    "edge_info\\[2\\].edge_info_pad",
+    "edge_info\\[3\\].edge_info_pad",
 
     "iovdda\\[1\\].iovdda_pad",
     "iovssa\\[1\\].iovssa_pad",
 
-	"edge_info\\[4\\].edge_info_pad",
-	"edge_info\\[5\\].edge_info_pad",
-	"edge_info\\[6\\].edge_info_pad",
-	"edge_info\\[7\\].edge_info_pad"
+    "edge_info\\[4\\].edge_info_pad",
+    "edge_info\\[5\\].edge_info_pad",
+    "edge_info\\[6\\].edge_info_pad",
+    "edge_info\\[7\\].edge_info_pad"
 ]
 # TODO: replace analog power pads with digital power
 PAD_WEST: [
     spi_sclk_pad,
-    spi_nsc_pad,
+    spi_ncs_pad,
     spi_si_pad,
     spi_so_pad,
 
