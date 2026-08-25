@@ -99,7 +99,7 @@ end
 
 /* opcode */ 
 assign op_rd_next = buf_q[OP_W-1:0] == OP_READ; 
-assign op_v = op_rd_next | (buf_q[OP_W-1:0] == OP_WRITE; 
+assign op_v = op_rd_next | buf_q[OP_W-1:0] == OP_WRITE; 
 
 /* request output */ 
 reg req_v_q; 
@@ -123,7 +123,7 @@ always @(negedge sclk)
 
 always @(negedge sclk or negedge rst_n) 
 	if (~rst_n) so_en_q <= 1'b0;
-	else so_en_q <= op_rd_q & ((fsm_q == ADDR) & addr_finished)  | ((fsm_q == ADDR) & ~data_finished));
+	else so_en_q <= op_rd_q & ((fsm_q == ADDR) & addr_finished)  | ((fsm_q == ADDR) & ~data_finished);
 
 assign so_en_o = so_en_q; 
 assign so_o = res_data_q[DATA_W-1];

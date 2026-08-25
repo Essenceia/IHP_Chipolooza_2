@@ -4,9 +4,9 @@
 `default_nettype none
 
 module chip_core #(
-    parameter NUM_INPUT_PADS,
-    parameter NUM_OUTPUT_PADS,
-    parameter NUM_BIDIR_PADS
+    parameter NUM_INPUT_PADS  = 2,
+    parameter NUM_OUTPUT_PADS = 1,
+    parameter NUM_BIDIR_PADS  = 8
     )(
     `ifdef USE_POWER_PINS
 	inout wire VDD, 
