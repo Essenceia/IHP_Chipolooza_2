@@ -95,18 +95,18 @@ PAD_NORTH: [
 ]
 # TODO: replace analog power pads with digital power
 PAD_WEST: [
-    spi_sclk_pad,
-    spi_ncs_pad,
-    spi_si_pad,
-    spi_so_pad,
+    unused_pad, 
+    test_mode_pad,
+    rst_n_pad,     
+    clk_mon_pad, 
 
     vddd_pad,
     vssd_pad,
-
-    rst_n_pad,    
-    test_mode_pad, 
-    clk_mon_pad, 
-    unused_pad 
+    
+    spi_so_pad,
+    spi_si_pad,
+    spi_ncs_pad,
+    spi_sclk_pad,
 ]
 
 PAD_CFG: dir::pad_cfg.tcl
