@@ -8,7 +8,7 @@ module chip_top #(
 	parameter NUM_VSSA   = 5,
 	parameter NUM_VDDA   = 2,
 	parameter NUM_IOVSSA = 2,
-	parameter NUM_IOVDDA = NUM_IOVSSA,
+	parameter NUM_IOVDDA = 1,
 	// Signal pads
 	parameter EDGE_INFO_W = 8,
 	parameter NUM_ANALOG_PADS = 8
@@ -17,6 +17,7 @@ module chip_top #(
 	//inout wire IOAVDD, IODVDD,
 	inout wire IOVDDA,
 	inout wire IOVSSA,
+	input wire IOVDDD, 
 	//inout wire VDDD, VSSD,
 	inout wire  VDDA,
 	inout wire  VSSA,
@@ -45,7 +46,10 @@ module chip_top #(
 	inout  wire [EDGE_INFO_W-1:0] edge_info_PAD
 );
 `ifdef USER_POWER_PINS
+	wire IOVDDD, IOVSSD; 	
 	wire VDDD, VSSD; 
+	assign IOVDDD = IOVDDA; 
+	assign IOVSSD = IOVSSA; 
 	assign VDDD = VDDA; // TODO remove once we have splitter cells
 	assign VSSD = VSSA; 
 `endif
@@ -54,8 +58,8 @@ module chip_top #(
 	wire                       rst_n_PAD2CORE;
 	wire [NUM_ANALOG_PADS-1:0] analog_PADRES;
 
-	// Power/gnd
-	// IO ring power
+	// Power
+	// Analog power domain
 	generate 
 	for (genvar i = 0; i  < NUM_IOVDDA; i = i+1) begin: iovdda 
    		(* keep *)
@@ -81,15 +85,6 @@ module chip_top #(
 	end
 	/*
 	(* keep *)
-	sg13cmos5l_IOPadIOVdd iodvdd_pad(
-	`ifdef USE_POWER_PINS
-	.iovdd  (IODVDD),
-	.iovss  (IODVSS),
-	.vdd    (DVDD),
-	.vss    (DVSS)
-	`endif
-	);
-	(* keep *)
 	sg13cmos5l_IOPadIOVss iodvss_pad(
 	`ifdef USE_POWER_PINS
 	.iovdd  (IODVDD),
@@ -97,8 +92,7 @@ module chip_top #(
 	.vdd    (DVDD),
 	.vss    (DVSS)
 	`endif
-	);*/
-	// Analog power domain
+	); */
 	for (genvar i = 0; i  < NUM_VDDA; i = i+1) begin: vdda 
 	(* keep *)
 	sg13cmos5l_IOPadVdd vdda_pad(
@@ -121,17 +115,19 @@ module chip_top #(
 	`endif
 	);
 	end
+	endgenerate // power
 	
-	/* Digital power domain
+	// Digital power domain
 	(* keep *)
-	sg13cmos5l_IOPadVdd dvdd_pad(
+   	sg13cmos5l_IOPadIOVdd iovddd_pad(
 	`ifdef USE_POWER_PINS
-	.iovdd  (IODVDD),
-	.iovss  (IODVSS),
-	.vdd    (DVDD),
-	.vss    (DVSS)
+	.iovdd  (IOVDDD),
+	.iovss  (IOVSSD),
+	.vdd    (VDDD),
+	.vss    (VSSD)
 	`endif
 	);
+	/*
 	(* keep *)
 	sg13cmos5l_IOPadVss dvss_pad(
 	`ifdef USE_POWER_PINS
@@ -141,7 +137,6 @@ module chip_top #(
 	.vss    (DVSS)
 	`endif
 	);*/
-	endgenerate // power
 
 
 	// Signal IO pad instances
