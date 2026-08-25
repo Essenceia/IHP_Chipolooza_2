@@ -13,29 +13,30 @@ module spi #(
 	parameter ADDR_W = 5,
 	parameter DATA_W = 16
 )(
-	input wire rst_n, 
+	input  wire rst_n, 
 
 	/* SPI bus interface */
-	input wire sclk,
-	input wire ncs_i, /* negative chip select, low enable */
-	input wire si_i, 
+	input  wire sclk,
+	input  wire ncs_i, /* negative chip select, low enable */
+	input  wire si_i, 
 	output wire so_en_o, // enable so pin, held to high impedance by default
 	output wire so_o,
 
 	/* Control register interface
 	request: read/write data from master */ 
-	output wire req_v_o, 
-	output wire req_rd_o,
+	output wire              req_v_o, 
+	output wire              req_rd_o,
 	output wire [ADDR_W-1:0] req_addr_o,
 	output wire [DATA_W-1:0] req_data_o,
+
 	/* response: read data for slave response */
-	input wire [DATA_W-1:0] res_data_i
+	input  wire [DATA_W-1:0] res_data_i
 );
 
 localparam OP_W = 8; 
 /* read and write use address width ADDR_W and data width DATA_W */
-localparam [OP_W-1:0] OP_READ  = 1'b0; 
-localparam [OP_W-1:0] OP_WRITE = 1'b1; 
+localparam [OP_W-1:0] OP_READ  = 'd0; 
+localparam [OP_W-1:0] OP_WRITE = 'd1; 
 
 localparam FSM_W = 3;
 localparam [FSM_W-1:0] IDLE   = 'd0;  
@@ -45,8 +46,8 @@ localparam [FSM_W-1:0] DATA   = 'd3;
 
 reg [FSM_W-1:0] fsm_q; 
 
-localparam BUF_W = $max(OP_W, DATA_W);
-localparam CNT_W = $clog2($max(BUF_W, ADDR_W));
+localparam BUF_W = DATA_W; // $max(OP_W, DATA_W);
+localparam CNT_W = $clog2(DATA_W); //$clog2($max(OP_W, DATA_W, ADDR_W));
 reg [CNT_W-1:0]  cnt_q; 
 reg [BUF_W-1:0]  buf_q;
 reg [ADDR_W-1:0] addr_q; 
@@ -72,6 +73,7 @@ always @(posedge sclk or negedge rst_n) begin
 			ADDR:	fsm_q <= addr_finished ? DATA: ADDR;  
 			DATA:	fsm_q <= data_finished ? IDLE: DATA;  
 			IDLE:   fsm_q <= IDLE; // loop in idle until cs is deasserted
+			default: fsm_q <= IDLE; 
 		endcase
 	end
 end
@@ -82,9 +84,11 @@ always @(posedge sclk) begin
 	buf_q <= { buf_q[BUF_W-1:1], si_i};
 end
 
-localparam [CNT_W-1:0] OP_CNT = OP_W - 1;
+/* verilator lint_off WIDTHTRUNC */
+localparam [CNT_W-1:0] OP_CNT   = OP_W - 1;
 localparam [CNT_W-1:0] ADDR_CNT = ADDR_W - 1;
 localparam [CNT_W-1:0] DATA_CNT = DATA_W - 1;
+/* verilator lint_on WIDTHTRUNC */
 
 wire cnt_rst; 
 assign op_finished = (fsm_q == OPCODE) & cnt_q == OP_CNT; 
@@ -117,8 +121,11 @@ response is allways provided on falling edge */
 reg so_en_q; 
 reg [DATA_W-1:0] res_data_q; 
 
+wire res_capture; 
+assign res_capture = (fsm_q == ADDR) & addr_finished; 
+
 always @(negedge sclk)
-	if (res_en)	res_data_q <= res_data_i;
+	if (res_capture) res_data_q <= res_data_i;
 	else res_data_q <= {res_data_q[DATA_W-2:0], 1'bx};
 
 always @(negedge sclk or negedge rst_n) 
