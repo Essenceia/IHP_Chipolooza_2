@@ -73,6 +73,6 @@ CONF := conf
 WAIVER_FILE := waiver.vlt
 LINT_FLAGS := -Wall -Wpedantic 
 
-lint: $(entry_deps) ## run lint on pure rtl blocks
+lint: $(entry_deps) ## Run lint on pure rtl blocks
 	verilator $(CONF)/$(WAIVER_FILE) -y $(SRC_DIR) -DVERILATOR_LINT=1 --lint-only $(LINT_FLAGS) --no-timing $^ --top $(TOP_NAME)
 .PHONY: lint
