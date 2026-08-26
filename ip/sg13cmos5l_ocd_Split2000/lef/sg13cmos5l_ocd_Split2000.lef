@@ -1,0 +1,102 @@
+VERSION 5.7 ;
+  NOWIREEXTENSIONATPIN ON ;
+  DIVIDERCHAR "/" ;
+  BUSBITCHARS "[]" ;
+MACRO sg13cmos5l_ocd_Split2000
+  CLASS PAD SPACER ;
+  FOREIGN sg13cmos5l_ocd_Split2000 ;
+  ORIGIN 0.000 0.000 ;
+  SIZE 10.000 BY 180.000 ;
+  SYMMETRY X Y R90 ;
+  SITE sg13cmos5l_ioSite ;
+  PIN vss
+    DIRECTION INOUT ;
+    USE GROUND ;
+    PORT
+      LAYER Metal3 ;
+        RECT 0.000 140.000 10.000 158.000 ;
+    END
+    PORT
+      LAYER Metal4 ;
+        RECT 0.000 162.200 10.000 178.000 ;
+    END
+    PORT
+      LAYER Metal1 ;
+        RECT 0.000 156.920 10.000 157.080 ;
+    END
+  END vss
+  PIN iovss
+    DIRECTION INOUT ;
+    USE GROUND ;
+    PORT
+      LAYER Metal3 ;
+        RECT 0.000 34.500 10.000 60.000 ;
+      LAYER Metal4 ;
+        RECT 0.000 34.500 10.000 60.000 ;
+      LAYER TopMetal1 ;
+        RECT 0.000 34.500 10.000 60.000 ;
+    END
+    PORT
+      LAYER Metal3 ;
+        RECT 0.000 7.000 10.000 32.500 ;
+      LAYER Metal4 ;
+        RECT 0.000 7.000 10.000 32.500 ;
+      LAYER TopMetal1 ;
+        RECT 0.000 7.000 10.000 32.500 ;
+    END
+    PORT
+      LAYER Metal3 ;
+        RECT 0.000 126.000 10.000 134.000 ;
+      LAYER Metal4 ;
+        RECT 0.000 126.000 10.000 134.000 ;
+      LAYER TopMetal1 ;
+        RECT 0.000 126.000 10.000 134.000 ;
+    END
+    PORT
+      LAYER Metal1 ;
+        RECT 0.000 115.620 10.000 140.170 ;
+        RECT 0.000 90.560 10.000 114.620 ;
+        RECT 0.000 65.000 10.000 89.560 ;
+    END
+  END iovss
+  PIN iovdd
+    DIRECTION INOUT ;
+    USE POWER ;
+    PORT
+      LAYER Metal3 ;
+        RECT 0.000 93.500 10.000 119.000 ;
+    END
+    PORT
+      LAYER Metal3 ;
+        RECT 0.000 66.000 10.000 91.500 ;
+    END
+    PORT
+      LAYER Metal4 ;
+        RECT 0.000 93.500 10.000 119.000 ;
+    END
+    PORT
+      LAYER Metal4 ;
+        RECT 0.000 66.000 10.000 91.500 ;
+    END
+    PORT
+      LAYER TopMetal1 ;
+        RECT 0.000 93.500 10.000 119.000 ;
+    END
+    PORT
+      LAYER TopMetal1 ;
+        RECT 0.000 66.000 10.000 91.500 ;
+    END
+    PORT
+      LAYER Metal1 ;
+        RECT 0.000 34.000 10.000 61.000 ;
+        RECT 0.000 6.000 10.000 33.000 ;
+    END
+  END iovdd
+  OBS
+      LAYER Metal1 ;
+        RECT 0.000 166.920 10.000 167.080 ;
+        RECT 0.000 148.420 10.000 148.580 ;
+  END
+END sg13cmos5l_ocd_Split2000
+END LIBRARY
+
