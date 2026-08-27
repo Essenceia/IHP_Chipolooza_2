@@ -110,6 +110,13 @@ PAD_WEST: [
 ]
 
 PAD_CFG: dir::pad_cfg.tcl
+# extra splitter cell
+EXTRA_GDS: 
+- dir::../ip/sg13cmos5l_ocd_Split2000/gds/sg13cmos5l_ocd_Split2000.gds
+EXTRA_LEFS:
+- dir::../ip/sg13cmos5l_ocd_Split2000/lef/sg13cmos5l_ocd_Split2000.lef
+EXTRA_VERILOG_MODELS:
+- dir::../ip/sg13cmos5l_ocd_Split2000/vh/sg13cmos5l_ocd_Split2000.v
 
 # SDC files
 PNR_SDC_FILE: dir::chip_top.sdc

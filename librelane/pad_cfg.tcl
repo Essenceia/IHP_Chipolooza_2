@@ -88,6 +88,8 @@ foreach i $all_inst {
 	puts [$i getName]
 }
 
+set last_pos 0.0
+
 foreach side $sides {
     puts "Placing pads for $side…"
     set sum_of_cell_widths 0
@@ -174,8 +176,15 @@ foreach side $sides {
 
         # Increment current position
         set cur_pos [expr $cur_pos + $space_between_pads_min_filler + $width]
+		set last_pos $cur_pos
     }
 }
+
+puts "last pos $last_pos"
+set last_pos [expr $last_pos + 5.0]
+
+# placing breaker cells, treating them as pads
+place_pad -row IO_WEST -location $last_pos {pwr_split_west} -master sg13cmos5l_ocd_Split2000
 
 puts "\[INFO\] Placing corner cells…"
 puts "\[INFO\] PAD_CORNER $::env(PAD_CORNER)"
