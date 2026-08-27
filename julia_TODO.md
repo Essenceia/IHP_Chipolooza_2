@@ -1,7 +1,8 @@
 # Julia's TODO list 
 
-- padring/power domain (follow the todos)
-	- add splitter cells to split pad ring power domains 
-	- re-add digital power domain 
+- padring/power domain - use JKU breaker cells 
+	- break IOVDD 
 
 - SPI reset signal: make decision on how it should be handled
+
+- Update SDC for digital timing

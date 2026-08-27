@@ -23,7 +23,7 @@ if { $::env(CLOCK_PORT) == $::env(CLOCK_NET) } {
     set port_args [get_pins [lindex $::env(CLOCK_NET) 0]]
 }
 
-puts "\[INFO] Using clock $clock_port…"
+puts "\[INFO] Using SPI clock $clock_port…"
 create_clock {*}$port_args -name $clock_port -period $::env(CLOCK_PERIOD)
 
 set input_delay_value [expr $::env(CLOCK_PERIOD) * $::env(IO_DELAY_CONSTRAINT) / 100]
@@ -44,23 +44,24 @@ set clocks [get_clocks $clock_port]
 # Input-only pads
 set clk_core_input_ports [get_ports { 
   rst_n_PAD
-	input_PAD[*]
+  spi_si_PAD
+  spi_ncs_PAD
 }] 
 
 set_input_delay -min 0 -clock $clocks $clk_core_input_ports
 set_input_delay -max $input_delay_value -clock $clocks $clk_core_input_ports
 
 # Output-only pads
-set clk_core_output_ports [get_ports { 
-	output_PAD[*]
-}] 
-
-set_output_delay $output_delay_value -clock $clocks $clk_core_output_ports
+#set clk_core_output_ports [get_ports { 
+#}] 
+#set_output_delay $output_delay_value -clock $clocks $clk_core_output_ports
 
 # Bidirectional pads
 set clk_core_inout_ports [get_ports { 
-	bidir_PAD[*]
+	spi_so_PAD
 }] 
+
+puts "\[WARNING\] TODO: Julia don't forget to update the sdc for timing"
 
 set_input_delay -min 0 -clock $clocks $clk_core_inout_ports
 set_input_delay -max $input_delay_value -clock $clocks $clk_core_inout_ports

@@ -48,7 +48,6 @@ VERILOG_DEFINES: [FUNCTIONAL]
 PRIMARY_GDSII_STREAMOUT_TOOL: klayout
 
 # Specify the pad instances for the padring
-# Signal, AVDD, txp, txn, VSS, clkp, clkn, vss
 PAD_SOUTH: [
     "analogs\\[0\\].analog_pad",
     "analogs\\[1\\].analog_pad",
@@ -116,10 +115,10 @@ SIGNOFF_SDC_FILE: dir::chip_top.sdc
 FALLBACK_SDC: dir::chip_top.sdc
 
 # Clock
-CLOCK_NET: m_analog/digital_clk_o
-CLOCK_PORT: m_analog/digital_clk_o
+CLOCK_NET: spi_sclk_pad/p2c
+CLOCK_PORT: spi_sclk_PAD
 
-CLOCK_PERIOD: 20
+CLOCK_PERIOD: 31.25
 
 # Floorplanning
 FP_SIZING: absolute
@@ -155,7 +154,6 @@ IGNORE_DISCONNECTED_MODULES:
 - bondpad_70x70_5L
 
 # Power / ground nets
-# TODO: add back digital power
 VDD_NETS:
 - VDDA
 - VDDD
