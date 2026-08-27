@@ -7,6 +7,10 @@ all: ${MAG_FILE}
 	magic -dnull -noconsole -rcfile ${PDK_ROOT}/${PDK}/libs.tech/magic/${PDK}.magicrc convert_mag.tcl
 .PHONEY: all
 
+magic: ${MAG_FILE} 
+	magic -rcfile ${PDK_ROOT}/${PDK}/libs.tech/magic/${PDK}.magicrc ${MAG_FILE}
+.PHONEY: magic 
+
 clean: 
 	rm -f ./gds/*
 	rm -f ./lef/*

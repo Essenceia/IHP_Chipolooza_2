@@ -3,18 +3,16 @@ MAG_FILE=mag/${CELL_NAME}.mag
 GDS_FILE=gds/${CELL_NAME}.gds
 LEF_FILE=lef/${CALL_NAME}.lef
 
-all: ${GDS_FILE} ${LEF_FILE}
+all: ${MAG_FILE}
+	magic -dnull -noconsole -rcfile ${PDK_ROOT}/${PDK}/libs.tech/magic/${PDK}.magicrc convert_mag.tcl
 .PHONEY: all
 
-# start magic 
-# magic -dnull -noconsole -rcfile ${PDK_ROOT}/${PDK}/libs.tech/magic/${PDK}.magicrc
-
-${GDS_FILE}: ${MAG_FILE} 
-
-${LEF_FILE}: ${MAG_FILE} 
+magic: ${MAG_FILE} 
+	magic -rcfile ${PDK_ROOT}/${PDK}/libs.tech/magic/${PDK}.magicrc ${MAG_FILE}
+.PHONEY: magic 
 
 clean: 
-	rm -f ./${GDS_FILE}
-	rm -f ./${LEF_FILE}
+	rm -f ./gds/*
+	rm -f ./lef/*
 	
 

@@ -172,20 +172,25 @@ foreach side $sides {
         place_pad -row [dict get $row_names $side] -location $cur_pos $inst_name -master $master_name
        
 		# debug log
-		puts "\[INFO\] place pad $inst_name on side $side belongs to master $master_name"
+		puts "\[INFO\] place pad $inst_name on side $side belongs to master $master_name at pos $cur_pos, width $width"
 
         # Increment current position
+		set last_pos [expr $cur_pos + $width]
         set cur_pos [expr $cur_pos + $space_between_pads_min_filler + $width]
-		set last_pos $cur_pos
     }
 }
 
-set last_pos [expr $last_pos + 1.0]
-puts "last pos $last_pos"
 
 # placing breaker cells, treating them as pads
-read_lef $::env(DESIGN_DIR)/../ip/sg13cmos5l_ocd_Split2000/lef/sg13cmos5l_ocd_Split2000.lef
-place_pad -row IO_WEST -location $last_pos {pwr_split_west} -master sg13cmos5l_ocd_Split2000
+set breaker_pos_west 0.0
+set breaker_pos_north $last_pos
+set breaker_master {sg13cmos5l_ocd_Split2000}
+read_lef $::env(DESIGN_DIR)/../ip/$breaker_master/lef/$breaker_master.lef
+
+puts "\[INFO\] Placing breaker cell $breaker_master at pos $breaker_pos_west and $breaker_pos_north"
+set breaker_name {pwr_split_west}
+place_pad -row IO_WEST -location $breaker_pos_west {pwr_split_west} -master $breaker_master
+place_pad -row IO_NORTH -location $breaker_pos_north {pwr_split_north} -master $breaker_master
 
 puts "\[INFO\] Placing corner cells…"
 puts "\[INFO\] PAD_CORNER $::env(PAD_CORNER)"
@@ -205,7 +210,6 @@ place_io_fill -row IO_EAST {*}$::env(PAD_FILLERS)
 puts "\[INFO\] Connecting ring signals…"
 
 # Connect the ring signals
-puts "\[WARNING\] Not connecting ring signals! TODO look into this more we want partial ring islands"
 connect_by_abutment
 
 puts "\[INFO\] Connecting by abutment finished…"
