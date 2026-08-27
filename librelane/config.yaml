@@ -160,7 +160,10 @@ VDD_NETS:
 GND_NETS:
 - VSSA
 - VSSD
-#
+
+PDN_CORE_VERTICAL_LAYER: Metal4
+PDN_CORE_HORIZONTAL_LAYER: TopMetal1
+
 PDN_CFG: dir::pdn_cfg.tcl
 
 # Maximum metal width without slotting: 30um

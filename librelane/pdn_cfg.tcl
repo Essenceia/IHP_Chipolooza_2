@@ -22,8 +22,11 @@ source $::env(SCRIPTS_DIR)/openroad/common/io.tcl
 source $::env(SCRIPTS_DIR)/openroad/common/set_global_connections.tcl
 set_global_connections
 
+puts "\[INFO\] Setting global connections done" 
+
 set secondary []
 foreach vdd $::env(VDD_NETS) gnd $::env(GND_NETS) {
+	puts "\[INFO\] VDD $vdd GND $gnd" 
     if { $vdd != $::env(VDD_NET)} {
         lappend secondary $vdd
 
@@ -47,15 +50,21 @@ foreach vdd $::env(VDD_NETS) gnd $::env(GND_NETS) {
     }
 }
 
+puts "\[INFO\] Setting voltage domain" 
+
 set_voltage_domain -name CORE -power $::env(VDD_NET) -ground $::env(GND_NET) \
     -secondary_power $secondary
 
-
+puts "\[INFO\] Voltage domain set" 
+puts "\[INFO\] PDN Multilayer $::env(PDN_MULTILAYER)" 
+puts "\[INFO\] PDN vertical layer $::env(PDN_VERTICAL_LAYER)" 
+puts "\[INFO\] PDN horizontal layer $::env(PDN_HORIZONTAL_LAYER)" 
 
 if { $::env(PDN_MULTILAYER) == 1 } {
 
     set arg_list [list]
     if { $::env(PDN_ENABLE_PINS) } {
+		puts "\[INFO\] power layer vertical $::env(PDN_VERTICAL_LAYER) horizontal $::env(PDN_HORIZONTAL_LAYER)" 
         lappend arg_list -pins "$::env(PDN_VERTICAL_LAYER) $::env(PDN_HORIZONTAL_LAYER)"
     }
 
@@ -122,6 +131,8 @@ if { $::env(PDN_MULTILAYER) == 1 } {
 
 # Adds the standard cell rails if enabled.
 if { $::env(PDN_ENABLE_RAILS) == 1 } {
+	puts "\[INFO\] Enabling standard cell power rails"
+
     add_pdn_stripe \
         -grid stdcell_grid \
         -layer $::env(PDN_RAIL_LAYER) \
@@ -174,11 +185,11 @@ if { $::env(PDN_CORE_RING) == 1 } {
         #        -layers "$::env(PDN_CORE_HORIZONTAL_LAYER) $::env(PDN_VERTICAL_LAYER)"
         #}
 
-        if { [info exists ::env(PDN_CORE_VERTICAL_LAYER)] && [info exists ::env(PDN_CORE_HORIZONTAL_LAYER)] } {
-            add_pdn_connect \
-                -grid stdcell_grid \
-                -layers "$::env(PDN_CORE_VERTICAL_LAYER) $::env(PDN_CORE_HORIZONTAL_LAYER)"
-        }
+       # if { [info exists ::env(PDN_CORE_VERTICAL_LAYER)] && [info exists ::env(PDN_CORE_HORIZONTAL_LAYER)] } {
+       #     add_pdn_connect \
+       #         -grid stdcell_grid \
+       #         -layers "$::env(PDN_CORE_VERTICAL_LAYER) $::env(PDN_CORE_HORIZONTAL_LAYER)"
+       # }
 
         add_pdn_connect \
             -grid stdcell_grid \
@@ -204,8 +215,8 @@ add_pdn_connect \
     -grid macro \
     -layers "$::env(PDN_VERTICAL_LAYER) $::env(PDN_HORIZONTAL_LAYER)"
 
-puts "$::env(SRAM_DEFINE)"
 if { [info exists ::env(SRAM_DEFINE)] } {
+	puts "$::env(SRAM_DEFINE)"
     if {$::env(SRAM_DEFINE) == "SRAM_gf180mcu_ocd_ip_sram"} {
         # Config for 3V3 SRAM
         source [file join [file dirname [info script]] "pdn_3v3_sram.tcl"]
@@ -213,7 +224,4 @@ if { [info exists ::env(SRAM_DEFINE)] } {
         # Config for 5V SRAM
         source [file join [file dirname [info script]] "pdn_5v_sram.tcl"]
     }
-} else {
-    # Config for 5V SRAM
-    source [file join [file dirname [info script]] "pdn_5v_sram.tcl"]
 }
