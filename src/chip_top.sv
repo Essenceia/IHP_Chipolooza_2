@@ -50,7 +50,6 @@ module chip_top #(
 	wire VDDD, VSSD; 
 	assign IOVDDD = IOVDDA; 
 	assign IOVSSD = IOVSSA; 
-	assign VDDD = VDDA; 
 	assign VSSD = VSSA; 
 `endif
 
