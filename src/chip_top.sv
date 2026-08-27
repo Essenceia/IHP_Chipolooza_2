@@ -58,14 +58,14 @@ module chip_top #(
 	wire                       rst_n_PAD2CORE;
 	wire [NUM_ANALOG_PADS-1:0] analog_PADRES;
 
-	(* keep *) sg13cmos5l_ocd_Split2000 pwr_split_west(
+	/*(* keep *) sg13cmos5l_ocd_Split2000 pwr_split_west(
    	    `ifdef USE_POWER_PINS
    		.iovdd  (IOVDDD),
    		.iovss  (IOVSSD),
-   		.vdd    (VDDD),
    	   	.vss    (VSSD)
    	   	`endif
-	);
+	);*/
+
 	// Power/gnd
 	// IO ring power
 	generate 

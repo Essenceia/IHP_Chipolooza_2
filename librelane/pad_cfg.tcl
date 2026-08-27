@@ -180,10 +180,11 @@ foreach side $sides {
     }
 }
 
+set last_pos [expr $last_pos + 1.0]
 puts "last pos $last_pos"
-set last_pos [expr $last_pos + 5.0]
 
 # placing breaker cells, treating them as pads
+read_lef $::env(DESIGN_DIR)/../ip/sg13cmos5l_ocd_Split2000/lef/sg13cmos5l_ocd_Split2000.lef
 place_pad -row IO_WEST -location $last_pos {pwr_split_west} -master sg13cmos5l_ocd_Split2000
 
 puts "\[INFO\] Placing corner cells…"
@@ -204,6 +205,7 @@ place_io_fill -row IO_EAST {*}$::env(PAD_FILLERS)
 puts "\[INFO\] Connecting ring signals…"
 
 # Connect the ring signals
+puts "\[WARNING\] Not connecting ring signals! TODO look into this more we want partial ring islands"
 connect_by_abutment
 
 puts "\[INFO\] Connecting by abutment finished…"
