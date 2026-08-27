@@ -185,7 +185,6 @@ foreach side $sides {
 set breaker_pos_west 0.0
 set breaker_pos_north $last_pos
 set breaker_master {sg13cmos5l_ocd_Split2000}
-read_lef $::env(DESIGN_DIR)/../ip/$breaker_master/lef/$breaker_master.lef
 
 puts "\[INFO\] Placing breaker cell $breaker_master at pos $breaker_pos_west and $breaker_pos_north"
 set breaker_name {pwr_split_west}

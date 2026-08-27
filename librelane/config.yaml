@@ -110,14 +110,6 @@ PAD_WEST: [
 ]
 
 PAD_CFG: dir::pad_cfg.tcl
-# extra splitter cell
-EXTRA_GDS: 
-- dir::../ip/sg13cmos5l_ocd_Split2000/gds/sg13cmos5l_ocd_Split2000.gds
-EXTRA_LEFS:
-- dir::../ip/sg13cmos5l_ocd_Split2000/lef/sg13cmos5l_ocd_Split2000.lef
-EXTRA_VERILOG_MODELS:
-- dir::../ip/sg13cmos5l_ocd_Split2000/vh/sg13cmos5l_ocd_Split2000.v
-
 # SDC files
 PNR_SDC_FILE: dir::chip_top.sdc
 SIGNOFF_SDC_FILE: dir::chip_top.sdc
@@ -149,9 +141,15 @@ PAD_BONDPAD_NAME: bondpad_70x70_5L
 # Bondpad is not yet included in the PDK
 EXTRA_GDS:
 - dir::../ip/bondpad_70x70/gds/bondpad_70x70_5L.gds
+- dir::../ip/sg13cmos5l_ocd_Split2000/gds/sg13cmos5l_ocd_Split2000.gds
 
 EXTRA_LEFS:
 - dir::../ip/bondpad_70x70/lef/bondpad_70x70_5L.lef
+- dir::../ip/sg13cmos5l_ocd_Split2000/lef/sg13cmos5l_ocd_Split2000.lef
+
+EXTRA_VERILOG_MODELS:
+- dir::../ip/sg13cmos5l_ocd_Split2000/vh/sg13cmos5l_ocd_Split2000.v
+
 
 IGNORE_DISCONNECTED_MODULES:
 - bondpad_70x70_5L
@@ -160,10 +158,10 @@ IGNORE_DISCONNECTED_MODULES:
 # TODO: add back digital power
 VDD_NETS:
 - VDDA
-#- VDDD
+- VDDD
 GND_NETS:
 - VSSA
-#- VSSD
+- VSSD
 #
 PDN_CFG: dir::pdn_cfg.tcl
 
