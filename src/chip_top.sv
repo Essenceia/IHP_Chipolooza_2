@@ -11,7 +11,7 @@ module chip_top #(
 	parameter NUM_IOVDDA = 1,
 	// Signal pads
 	parameter EDGE_INFO_W = 8,
-	parameter NUM_ANALOG_PADS = 8
+	parameter NUM_ANALOG_PADS = 7
 	)(
 	`ifdef USE_POWER_PINS
 	//inout wire IOAVDD, IODVDD,

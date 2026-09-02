@@ -51,7 +51,7 @@ PRIMARY_GDSII_STREAMOUT_TOOL: klayout
 PAD_SOUTH: [
     "analogs\\[0\\].analog_pad",
     "analogs\\[1\\].analog_pad",
-    "analogs\\[3\\].analog_pad",
+    "analogs\\[2\\].analog_pad",
 
     "vdda\\[0\\].vdda_pad",
     "tx_p_pad",   
@@ -64,10 +64,10 @@ PAD_SOUTH: [
 ]
 
 PAD_EAST: [
+    "analogs\\[3\\].analog_pad",
     "analogs\\[4\\].analog_pad",
     "analogs\\[5\\].analog_pad",
     "analogs\\[6\\].analog_pad",
-    "analogs\\[7\\].analog_pad",
 
     "iovdda\\[0\\].iovdda_pad",
     "iovssa\\[0\\].iovssa_pad",
