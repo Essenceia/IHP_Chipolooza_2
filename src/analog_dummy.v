@@ -20,7 +20,11 @@ module analog_dummy #(
 
 	output wire digital_clk_o
 );
-
+wire clk_unused; 
+wire analog_unused; 
 assign digital_clk_o = clk_p_io; 
+assign  clk_unused = clk_n_io;
+
+assign analog_unused = |{tx_p_io, tx_n_io, rx_p_io, rx_n_io, analog_io};
 
 endmodule
