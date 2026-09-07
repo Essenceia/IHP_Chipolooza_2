@@ -31,6 +31,7 @@ meta:
     #Netgen.LVS: null
     #Checker.LVS: null
 
+
 DESIGN_NAME: chip_top
 VERILOG_FILES:
 - dir::../src/chip_top.sv
@@ -41,9 +42,7 @@ VERILOG_FILES:
 
 VERILOG_DEFINES: [FUNCTIONAL]
 
-# Enable plugin for better SystemVerilog support
-# USE_SLANG: True
-# SLANG_ARGUMENTS: ['--keep-hierarchy']
+SYNTH_AUTONAME: true
 
 # Slightly smaller file sizes
 PRIMARY_GDSII_STREAMOUT_TOOL: klayout
@@ -119,7 +118,7 @@ FALLBACK_SDC: dir::chip_top.sdc
 CLOCK_NET: spi_sclk_pad/p2c
 CLOCK_PORT: spi_sclk_PAD
 
-CLOCK_PERIOD: 31.25
+CLOCK_PERIOD: 100
 
 # Floorplanning
 FP_SIZING: absolute
@@ -180,3 +179,12 @@ PDN_ENABLE_PINS: False
 # Because we have multiple power pads for one power domain
 MAGIC_EXT_UNIQUE: notopports
 
+# fix timing - dissabled for now, no need 
+RUN_POST_CTS_RESIZER_TIMING: false
+
+# Add buffers
+RUN_POST_GPL_DESIGN_REPAIR: true
+DESIGN_REPAIR_BUFFER_INPUT_PORTS: False
+DESIGN_REPAIR_BUFFER_OUTPUT_PORTS: False
+DESIGN_REPAIR_MAX_SLEW_PCT: 10
+DESIGN_REPAIR_MAX_CAP_PCT: 0

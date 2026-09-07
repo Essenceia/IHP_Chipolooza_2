@@ -19,12 +19,7 @@ set_load $cap_load [all_outputs]
 set SCLK_MHZ 10
 set SCLK_PERIOD [expr 1000.0/ $SCLK_MHZ]
 set spi_clk sclk
-
-set tp [get_pins -hierarchical -regexp {.*sclk.*m_magic_clkroot_anchor.*X}]
-puts "pins found"
-foreach p $tp {
-	puts "$p"
-} 
+puts "clk $spi_clk $SCLK_MHZ MHz period $SCLK_PERIOD ns"
 
 create_clock [get_pins -hierarchical -regexp {.*m_spi_sclk_clkroot.m_magic_clkroot_anchor/X}] \
 	-name $spi_clk \
@@ -34,7 +29,7 @@ puts "\[WARNING\] TODO: Julia don't forget to update the sdc for proper SPI timi
 
 set spi_input_delay_value [expr $SCLK_PERIOD * $::env(IO_DELAY_CONSTRAINT) / 100]
 set spi_output_delay_value [expr $SCLK_PERIOD * $::env(IO_DELAY_CONSTRAINT) / 100]
-puts "\[INFO] Setting CPI output delay to: $spi_output_delay_value"
+puts "\[INFO] Setting SPI output delay to: $spi_output_delay_value"
 puts "\[INFO] Setting SPI input delay to: $spi_input_delay_value"
 
 # Input-only pads

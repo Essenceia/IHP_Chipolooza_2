@@ -53,7 +53,6 @@ module chip_top #(
 	assign VSSD = VSSA; 
 `endif
 
-	(* keep *) wire digital_clk;
 	wire                       rst_n_PAD2CORE;
 	wire [NUM_ANALOG_PADS-1:0] analog_PADRES;
 
@@ -229,12 +228,12 @@ module chip_top #(
 	);
 
 	// SPI pads
-	wire spi_sclk, spi_ncs, spi_si, spi_so_en, spi_so;
+	wire spi_sclk_p2c, spi_ncs, spi_si, spi_so_en, spi_so;
 	(* keep *) sg13cmos5l_IOPadIn spi_sclk_pad (
 		`ifdef USE_POWER_PINS
 		.iovdd(IOVDDD), .iovss(IOVSSD),	.vdd(VDDD),	.vss(VSSD),
 		`endif
-		.p2c(spi_sclk),	
+		.p2c(spi_sclk_p2c),	
 		.pad(spi_sclk_PAD)
 	 ); 
 	(* keep *) sg13cmos5l_IOPadIn spi_ncs_pad (
@@ -296,7 +295,19 @@ module chip_top #(
 		.c2p(clk_mon), 
 		.pad(clk_mon_PAD)
 	 ); 
-	
+
+	/* clk root anchors */
+	wire spi_sclk;
+	(* keep *)clkroot_anchor m_spi_sclk_clkroot(
+		.i(spi_sclk_p2c),
+		.o(spi_sclk)
+	);
+	wire digital_clk_a2d; 
+	wire digital_clk; 
+	(* keep *)clkroot_anchor m_digital_clk_clkroot(
+		.i(digital_clk_a2d),
+		.o(digital_clk)
+	);
 
 	// Digital core design
 	(* keep *) chip_core i_chip_core (
@@ -336,7 +347,7 @@ module chip_top #(
 		.rx_n_io(rx_n),
 
 		.analog_io(analog_PADRES),
-		.digital_clk_o(digital_clk)
+		.digital_clk_o(digital_clk_a2d)
 	);
 
 endmodule
