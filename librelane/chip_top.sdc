@@ -1,35 +1,7 @@
 current_design $::env(DESIGN_NAME)
 set_units -time ns
 
-set clock_port __VIRTUAL_CLK__
-if { [info exists ::env(CLOCK_PORT)] } {
-    set port_count [llength $::env(CLOCK_PORT)]
-
-    if { $port_count == "0" } {
-        puts "\[WARNING] No CLOCK_PORT found. A dummy clock will be used."
-    } elseif { $port_count != "1" } {
-        puts "\[WARNING] Multi-clock files are not currently supported by the base SDC file. Only the first clock will be constrained."
-    }
-
-    if { $port_count > "0" } {
-        set ::clock_port [lindex $::env(CLOCK_PORT) 0]
-    }
-}
-
-if { $::env(CLOCK_PORT) == $::env(CLOCK_NET) } {
-    set port_args [get_ports $clock_port]
-} else {
-    # This should actually use CLOCK_PIN?
-    set port_args [get_pins [lindex $::env(CLOCK_NET) 0]]
-}
-
-puts "\[INFO] Using SPI clock $clock_port…"
-create_clock {*}$port_args -name $clock_port -period $::env(CLOCK_PERIOD)
-
-set input_delay_value [expr $::env(CLOCK_PERIOD) * $::env(IO_DELAY_CONSTRAINT) / 100]
-set output_delay_value [expr $::env(CLOCK_PERIOD) * $::env(IO_DELAY_CONSTRAINT) / 100]
-puts "\[INFO] Setting output delay to: $output_delay_value"
-puts "\[INFO] Setting input delay to: $input_delay_value"
+# Common 
 
 set_max_fanout $::env(MAX_FANOUT_CONSTRAINT) [current_design]
 if { [info exists ::env(MAX_TRANSITION_CONSTRAINT)] } {
@@ -39,44 +11,79 @@ if { [info exists ::env(MAX_CAPACITANCE_CONSTRAINT)] } {
     set_max_capacitance $::env(MAX_CAPACITANCE_CONSTRAINT) [current_design]
 }
 
-set clocks [get_clocks $clock_port]
+set cap_load [expr $::env(OUTPUT_CAP_LOAD) / 1000.0]
+puts "\[INFO] Setting load to: $cap_load"
+set_load $cap_load [all_outputs]
+
+# SPI 
+set SCLK_MHZ 10
+set SCLK_PERIOD [expr 1000.0/ $SCLK_MHZ]
+set spi_clk sclk
+
+set tp [get_pins -hierarchical -regexp {.*sclk.*m_magic_clkroot_anchor.*X}]
+puts "pins found"
+foreach p $tp {
+	puts "$p"
+} 
+
+create_clock [get_pins -hierarchical -regexp {.*m_spi_sclk_clkroot.m_magic_clkroot_anchor/X}] \
+	-name $spi_clk \
+	-period $SCLK_PERIOD
+
+puts "\[WARNING\] TODO: Julia don't forget to update the sdc for proper SPI timing"
+
+set spi_input_delay_value [expr $SCLK_PERIOD * $::env(IO_DELAY_CONSTRAINT) / 100]
+set spi_output_delay_value [expr $SCLK_PERIOD * $::env(IO_DELAY_CONSTRAINT) / 100]
+puts "\[INFO] Setting CPI output delay to: $spi_output_delay_value"
+puts "\[INFO] Setting SPI input delay to: $spi_input_delay_value"
 
 # Input-only pads
-set clk_core_input_ports [get_ports { 
+set spi_input_ports [get_ports { 
   rst_n_PAD
   spi_si_PAD
   spi_ncs_PAD
 }] 
 
-set_input_delay -min 0 -clock $clocks $clk_core_input_ports
-set_input_delay -max $input_delay_value -clock $clocks $clk_core_input_ports
-
-# Output-only pads
-#set clk_core_output_ports [get_ports { 
-#}] 
-#set_output_delay $output_delay_value -clock $clocks $clk_core_output_ports
+set_input_delay -min 0 -clock $spi_clk $spi_input_ports
+set_input_delay -max $spi_input_delay_value -clock $spi_clk $spi_input_ports
 
 # Bidirectional pads
-set clk_core_inout_ports [get_ports { 
+set spi_inout_ports [get_ports { 
 	spi_so_PAD
 }] 
 
-puts "\[WARNING\] TODO: Julia don't forget to update the sdc for timing"
+set_input_delay -min 0 -clock $spi_clk $spi_inout_ports
+set_input_delay -max $spi_input_delay_value -clock $spi_clk $spi_inout_ports
+set_output_delay $spi_output_delay_value -clock $spi_clk $spi_inout_ports
 
-set_input_delay -min 0 -clock $clocks $clk_core_inout_ports
-set_input_delay -max $input_delay_value -clock $clocks $clk_core_inout_ports
-set_output_delay $output_delay_value -clock $clocks $clk_core_inout_ports
+puts "\[INFO] Setting SPI clock uncertainty to: $::env(CLOCK_UNCERTAINTY_CONSTRAINT)"
+set_clock_uncertainty $::env(CLOCK_UNCERTAINTY_CONSTRAINT) $spi_clk
 
-set cap_load [expr $::env(OUTPUT_CAP_LOAD) / 1000.0]
-puts "\[INFO] Setting load to: $cap_load"
-set_load $cap_load [all_outputs]
+puts "\[INFO] Setting SPI clock transition to: $::env(CLOCK_TRANSITION_CONSTRAINT)"
+set_clock_transition $::env(CLOCK_TRANSITION_CONSTRAINT) $spi_clk
 
-puts "\[INFO] Setting clock uncertainty to: $::env(CLOCK_UNCERTAINTY_CONSTRAINT)"
-set_clock_uncertainty $::env(CLOCK_UNCERTAINTY_CONSTRAINT) $clocks
+# Digital clk
+puts "\[WARNING\] TODO: Julia D2A timing assums max of 10G and 32b wide interface, update for 25G and different interface widths"
+puts "\[WARNING\] TODO: Update digital clk with proper analog -> digital parameters"
 
-puts "\[INFO] Setting clock transition to: $::env(CLOCK_TRANSITION_CONSTRAINT)"
-set_clock_transition $::env(CLOCK_TRANSITION_CONSTRAINT) $clocks
+set A2D_W 32 
+set DIGITAL_CLK_MHZ 322.26562 
+puts "\[INFO\] DIGITAL_CLK_MHZ $DIGITAL_CLK_MHZ MHz"
+set DIGITAL_CLK_PERIOD [expr 1000 / $DIGITAL_CLK_MHZ]
+set digital_clk digital_clk
 
+create_clock [get_pins -hierarchical -regexp {.*m_digital_clk_clkroot.m_magic_clkroot_anchor/X}] \
+	-name $digital_clk \
+	-period $DIGITAL_CLK_PERIOD
+
+puts "\[INFO] Setting digital clock uncertainty to: $::env(CLOCK_UNCERTAINTY_CONSTRAINT)"
+set_clock_uncertainty $::env(CLOCK_UNCERTAINTY_CONSTRAINT) $digital_clk
+
+puts "\[INFO] Setting digital clock transition to: $::env(CLOCK_TRANSITION_CONSTRAINT)"
+set_clock_transition $::env(CLOCK_TRANSITION_CONSTRAINT) $digital_clk
+
+
+# Common 
 puts "\[INFO] Setting timing derate to: $::env(TIME_DERATING_CONSTRAINT)%"
 set_timing_derate -early [expr 1-[expr $::env(TIME_DERATING_CONSTRAINT) / 100]]
 set_timing_derate -late [expr 1+[expr $::env(TIME_DERATING_CONSTRAINT) / 100]]
@@ -86,4 +93,6 @@ if { [info exists ::env(OPENLANE_SDC_IDEAL_CLOCKS)] && $::env(OPENLANE_SDC_IDEAL
 } else {
     set_propagated_clock [all_clocks]
 }
+
+
 

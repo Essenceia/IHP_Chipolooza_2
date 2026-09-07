@@ -37,6 +37,7 @@ VERILOG_FILES:
 - dir::../src/analog_dummy.v
 - dir::../src/chip_core.sv
 - dir::../src/spi.v
+- dir::../src/clkroot_anchor.v
 
 VERILOG_DEFINES: [FUNCTIONAL]
 
