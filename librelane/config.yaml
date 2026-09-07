@@ -182,9 +182,10 @@ MAGIC_EXT_UNIQUE: notopports
 # fix timing - dissabled for now, no need 
 RUN_POST_CTS_RESIZER_TIMING: false
 
-# Add buffers
-RUN_POST_GPL_DESIGN_REPAIR: true
-DESIGN_REPAIR_BUFFER_INPUT_PORTS: False
-DESIGN_REPAIR_BUFFER_OUTPUT_PORTS: False
+# Add buffers to fix slew and cap rate violations
+# to be done when design is stabilized
+RUN_POST_GPL_DESIGN_REPAIR: false
+DESIGN_REPAIR_BUFFER_INPUT_PORTS: true
+DESIGN_REPAIR_BUFFER_OUTPUT_PORTS: true
 DESIGN_REPAIR_MAX_SLEW_PCT: 10
 DESIGN_REPAIR_MAX_CAP_PCT: 0

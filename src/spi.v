@@ -13,8 +13,6 @@ module spi #(
 	parameter ADDR_W = 5,
 	parameter DATA_W = 16
 )(
-	input  wire rst_n, 
-
 	/* SPI bus interface */
 	input  wire sclk,
 	input  wire ncs_i, /* negative chip select, low enable */
@@ -61,21 +59,17 @@ wire addr_finished;
 wire data_finished; 
 
 
-always @(posedge sclk or negedge rst_n) begin
-	if (~rst_n) begin
-		fsm_q <= OPCODE; 
+always @(posedge sclk) begin
+	if (ncs_i) begin
+		fsm_q <= OPCODE;
 	end else begin
-		if (ncs_i) begin
-			fsm_q <= OPCODE;
-		end else begin
-			case(fsm_q) 
-				OPCODE:	fsm_q <= op_finished ? (op_v ? ADDR: IDLE): OPCODE;  
-				ADDR:	fsm_q <= addr_finished ? DATA: ADDR;  
-				DATA:	fsm_q <= data_finished ? IDLE: DATA;  
-				IDLE:   fsm_q <= IDLE; // loop in idle until cs is deasserted
-				default: fsm_q <= IDLE; 
-			endcase
-		end
+		case(fsm_q) 
+			OPCODE:	fsm_q <= op_finished ? (op_v ? ADDR: IDLE): OPCODE;  
+			ADDR:	fsm_q <= addr_finished ? DATA: ADDR;  
+			DATA:	fsm_q <= data_finished ? IDLE: DATA;  
+			IDLE:   fsm_q <= IDLE; // loop in idle until cs is deasserted
+			default: fsm_q <= IDLE; 
+		endcase
 	end
 end
 
@@ -100,8 +94,8 @@ assign addr_finished = (fsm_q == ADDR) & cnt_q == ADDR_CNT;
 assign data_finished = (fsm_q == DATA) & cnt_q == DATA_CNT; 
 assign cnt_rst = op_finished | addr_finished | data_finished; 
 
-always @(posedge sclk or negedge rst_n) begin
-	if (~rst_n) cnt_q <= {CNT_W{1'b0}};
+always @(posedge sclk) begin
+	if (ncs_i) cnt_q <= {CNT_W{1'b0}};
 	else begin
 		if (ncs_i | cnt_rst) cnt_q <= {CNT_W{1'b0}};
 		else cnt_q <= cnt_q + 1'b1; 
@@ -135,8 +129,8 @@ always @(negedge sclk)
 	if (res_capture) res_data_q <= res_data_i;
 	else res_data_q <= {res_data_q[DATA_W-2:0], 1'bx};
 
-always @(negedge sclk or negedge rst_n) 
-	if (~rst_n) so_en_q <= 1'b0;
+always @(negedge sclk) 
+	if (ncs_i) so_en_q <= 1'b0;
 	else so_en_q <= op_rd_q & ((fsm_q == ADDR) & addr_finished)  | ((fsm_q == ADDR) & ~data_finished);
 
 assign so_en_o = so_en_q; 
