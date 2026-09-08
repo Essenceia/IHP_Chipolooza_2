@@ -48,7 +48,7 @@ module chip_top #(
 // TODO remove VDD shorts once we have splitter cells
 	wire IOVDDD, IOVSSD; 	
 	(* keep *)wire VDDD, VSSD; 
-	(* keep *)wire VDDA, VSSA; 
+	//(* keep *)wire VDDA, VSSA; 
 	assign IOVDDD = IOVDDA; 
 	assign IOVSSD = IOVSSA; 
 	assign VSSD = VSSA; 

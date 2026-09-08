@@ -7,7 +7,15 @@ set d_pwr DIGITAL
 set a_pwr ANALOG
 set a_pwr2 ANALOG_SECONDARY
 
-source $::env(DESIGN_DIR)/regions.tcl
+#source $::env(DESIGN_DIR)/regions.tcl
+proc log_db_core { domain } {
+	set region [log_cmd [ord::get_db_block] findRegion $domain]
+	puts "return $region" 
+	set domain [log_cmd [ord::get_db_block] findPowerDomain $domain]
+	puts "return $domain" 
+}
+
+log_db_core Core
 
 # set global power connections
 proc global_connect_pwr_module { inst_regexp vdd vss region } {
@@ -31,16 +39,20 @@ proc set_db_net_special { netname sigtype } {
 	}
 }
 
-# set_db_net_special VDDD "POWER"
-# set_db_net_special VSSD "GROUND"
-# set_db_net_special VDDA "POWER"
-# set_db_net_special VSSA "GROUND"
+puts "Updating db net properties" 
+
+set_db_net_special VDDD "POWER"
+set_db_net_special VSSD "GROUND"
+set_db_net_special VDDA "POWER"
+set_db_net_special VSSA "GROUND"
 
 proc log_voltage_domains { name } {
 	puts "voltage domains: "
-	foreach d [pdn::get_voltage_domains $name] {
-		puts "- $d"
-	}
+	set d [log_cmd pdn::find_domain $name] 
+	puts "returned $d"
+
+	set d [log_cmd pdn::get_voltage_domains $name] 
+	puts "returned $d"
 }
 # define power domains
 log_cmd set_voltage_domain -name $d_pwr -region $d_pwr -power VDDD -ground VSSD 
@@ -49,9 +61,11 @@ log_cmd set_voltage_domain -name $a_pwr2 -region $a_pwr2 -power VDDA -ground VSS
 
 global_connect -verbose
 
-log_voltage_domains .*
-log_voltage_domains Core
+log_db_core Core 
+log_db_core $d_pwr 
+log_db_core $a_pwr 
 
+#log_voltage_domains Core
 
 # debug
 #puts "volate domains: [get_voltage_domains]"
