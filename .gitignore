@@ -4,3 +4,4 @@ IHP-Open-PDK/
 sim_build/
 final/
 *.swp
+*.swo

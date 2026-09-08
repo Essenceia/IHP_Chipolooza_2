@@ -2,38 +2,23 @@ puts  stderr "Reading custom PDN cfg file for split power domains"
 
 # cargo cult
 source $::env(SCRIPTS_DIR)/openroad/common/io.tcl
-source $::env(SCRIPTS_DIR)/openroad/common/set_global_connections.tcl
-set_global_connections
+
+set d_pwr DIGITAL 
+set a_pwr ANALOG
+set a_pwr2 ANALOG_SECONDARY
 
 source $::env(DESIGN_DIR)/regions.tcl
 
-# tag pwr/gnd nets in odb
-#set secondary []
-#foreach vdd $::env(VDD_NETS) gnd $::env(GND_NETS) {
-#	puts "\[INFO\] VDD $vdd GND $gnd" 
-#    if { $vdd != $::env(VDD_NET)} {
-#        lappend secondary $vdd
-#
-#        set db_net [[ord::get_db_block] findNet $vdd]
-#        if {$db_net == "NULL"} {
-#            set net [odb::dbNet_create [ord::get_db_block] $vdd]
-#            $net setSpecial
-#            $net setSigType "POWER"
-#        }
-#    }
-#
-#    if { $gnd != $::env(GND_NET)} {
-#        lappend secondary $gnd
-#
-#        set db_net [[ord::get_db_block] findNet $gnd]
-#        if {$db_net == "NULL"} {
-#            set net [odb::dbNet_create [ord::get_db_block] $gnd]
-#            $net setSpecial
-#            $net setSigType "GROUND"
-#        }
-#    }
-#}
+# set global power connections
+proc global_connect_pwr_module { inst_regexp vdd vss region } {
+	log_cmd add_global_connection -region $region -net $vdd -inst_pattern $inst_regexp -pin_pattern VDD -power
+	log_cmd add_global_connection -region $region -net $vss -inst_pattern $inst_regexp -pin_pattern VSS -ground
+}
+global_connect_pwr_module {.*i_chip_core.*} VDDD VSSD DIGITAL  
+global_connect_pwr_module {.*clkroot.*} VDDD VSSD DIGITAL
+global_connect_pwr_module {.*m_analog.*} VDDA VSSA ANALOG
 
+# tag pwr/gnd nets in odb
 proc set_db_net_special { netname sigtype } {
 	set db_net [[ord::get_db_block] findNet $netname]
 	if {$db_net == "NULL"} {
@@ -41,25 +26,35 @@ proc set_db_net_special { netname sigtype } {
 	    log_cmd $net setSpecial
 	    log_cmd $net setSigType $sigtype
 	} else {
-	    $db_net setSpecial
-	    $db_net setSigType $sigtype
-		puts $netname
+	    log_cmd $db_net setSpecial
+	    log_cmd $db_net setSigType $sigtype
 	}
 }
 
-set_db_net_special VDDD "POWER"
-set_db_net_special VSSD "GROUND"
-set_db_net_special VDDA "POWER"
-set_db_net_special VSSA "GROUND"
+# set_db_net_special VDDD "POWER"
+# set_db_net_special VSSD "GROUND"
+# set_db_net_special VDDA "POWER"
+# set_db_net_special VSSA "GROUND"
 
+proc log_voltage_domains { name } {
+	puts "voltage domains: "
+	foreach d [pdn::get_voltage_domains $name] {
+		puts "- $d"
+	}
+}
 # define power domains
-# CORE digital domain exists by default 
-set d_pwr DIGITAL 
-set a_pwr ANALOG
-set a_pwr2 ANALOG_SECONDARY
-set_voltage_domain -name $d_pwr -region $d_pwr -power VDDD -ground VSSD 
-set_voltage_domain -name $a_pwr -region $a_pwr -power VDDA -ground VSSA
-set_voltage_domain -name $a_pwr2 -region $a_pwr2 -power VDDA -ground VSSA
+log_cmd set_voltage_domain -name $d_pwr -region $d_pwr -power VDDD -ground VSSD 
+log_cmd set_voltage_domain -name $a_pwr -region $a_pwr -power VDDA -ground VSSA
+log_cmd set_voltage_domain -name $a_pwr2 -region $a_pwr2 -power VDDA -ground VSSA
+
+global_connect -verbose
+
+log_voltage_domains .*
+log_voltage_domains Core
+
+
+# debug
+#puts "volate domains: [get_voltage_domains]"
 
 # don't add a core ring as we don't have unified power
 

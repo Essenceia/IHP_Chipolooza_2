@@ -47,7 +47,8 @@ module chip_top #(
 `ifdef USE_POWER_PINS
 // TODO remove VDD shorts once we have splitter cells
 	wire IOVDDD, IOVSSD; 	
-	wire VDDD, VSSD; 
+	(* keep *)wire VDDD, VSSD; 
+	(* keep *)wire VDDA, VSSA; 
 	assign IOVDDD = IOVDDA; 
 	assign IOVSSD = IOVSSA; 
 	assign VSSD = VSSA; 
