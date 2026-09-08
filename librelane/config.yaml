@@ -155,16 +155,14 @@ IGNORE_DISCONNECTED_MODULES:
 
 # Power / ground nets
 VDD_NETS:
-- VDDA
 - VDDD
 GND_NETS:
-- VSSA
 - VSSD
 
 PDN_CORE_VERTICAL_LAYER: Metal4
 PDN_CORE_HORIZONTAL_LAYER: TopMetal1
 
-PDN_CFG: dir::pdn_cfg.tcl
+PDN_CFG: dir::split_pdn_cfg.tcl
 
 # Maximum metal width without slotting: 30um
 PDN_CORE_RING_VWIDTH: 15
