@@ -15,7 +15,7 @@ proc log_db_core { domain } {
 	puts "return $domain" 
 }
 
-log_db_core Core
+#log_db_core Core
 
 # set global power connections
 proc global_connect_pwr_module { inst_regexp vdd vss region } {
@@ -135,4 +135,9 @@ proc add_pwr_grid { domain grid_name } {
 
 add_pwr_grid $d_pwr digital_std_gates	
 add_pwr_grid $a_pwr tmp_analog_grid
-add_pwr_grid $a_pwr2 tmp_analog_grid2	
+add_pwr_grid $a_pwr2 tmp_analog_grid2
+
+log_cmd pdngen -check_only 
+log_cmd pdngen -report_only 
+puts "done" 
+	
