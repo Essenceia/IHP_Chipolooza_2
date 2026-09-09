@@ -3,7 +3,7 @@ puts  stderr "Reading custom PDN cfg file for split power domains"
 # cargo cult
 source $::env(SCRIPTS_DIR)/openroad/common/io.tcl
 
-set d_pwr DIGITAL 
+set d_pwr Core 
 set a_pwr ANALOG
 set a_pwr2 ANALOG_SECONDARY
 
@@ -55,7 +55,9 @@ proc log_voltage_domains { name } {
 	puts "returned $d"
 }
 # define power domains
-log_cmd set_voltage_domain -name $d_pwr -region $d_pwr -power VDDD -ground VSSD 
+#log_cmd set_voltage_domain -name $d_pwr -region $d_pwr -power VDDD -ground VSSD 
+log_cmd set_voltage_domain -name $d_pwr -power VDDD -ground VSSD 
+#log_cmd set_voltage_domain -name Core -region DIGITAL -power VDDD -ground VSSD 
 log_cmd set_voltage_domain -name $a_pwr -region $a_pwr -power VDDA -ground VSSA
 log_cmd set_voltage_domain -name $a_pwr2 -region $a_pwr2 -power VDDA -ground VSSA
 
@@ -65,7 +67,7 @@ log_db_core Core
 log_db_core $d_pwr 
 log_db_core $a_pwr 
 
-#log_voltage_domains Core
+log_voltage_domains Core
 
 # debug
 #puts "volate domains: [get_voltage_domains]"
